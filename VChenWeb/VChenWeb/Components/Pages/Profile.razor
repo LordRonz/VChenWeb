@@ -1,0 +1,164 @@
+﻿@page "/profile"
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore;
+@using VChenWeb.Data;
+@using Color = MudBlazor.Color
+@inject IDialogService DialogService
+
+<PageTitle>Profile</PageTitle>
+
+<main class="container">
+    <MudPaper Class="pa-4 mb-8" Elevation="3">
+        <div class="d-flex align-items-center gap-4">
+            <image src="/images/profile.jpg" class="rounded-circle profile-image"></image>
+            <div>
+                <h2 class="h4">@nameTitle</h2>
+                <h3 class="h6">Member Premium</h3>
+            </div>
+        </div>
+    </MudPaper>
+    <MudGrid>
+        <MudItem xs="12" sm="12">
+            <MudPaper Class="pa-4" Elevation="3">
+                <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" Class="d-flex flex-column gap-3">
+                    <MudTextField T="string" Label="Nama Lengkap" @bind-Value="@namaLengkap" />
+                    <MudTextField T="string" Label="Email" RequiredError="Email is required!" Disabled @bind-Value="@email" />
+                    <MudTextField T="string" Label="Alamat" @bind-Value="@alamat" />
+                    <MudTextField T="string" Label="No. HP" @bind-Value="@noHp" />
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto rounded-3" FullWidth="true" OnClick="(() => OnSubmit())">Simpan</MudButton>
+                </MudForm>
+            </MudPaper>
+        </MudItem>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="ml-auto rounded-3" OnClick="OpenDialog">Log Out</MudButton>
+    </MudGrid>
+</main>
+
+
+
+@inject AppDbContext dbContext
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject NavigationManager NavManager
+@inject ISnackbar Snackbar
+@code {
+    private List<DateTime> markedDates = new List<DateTime>();
+    [CascadingParameter]
+    public VChenWeb.Components.Layout.MainLayout Layout { get; set; }
+
+    bool success;
+    string[] errors = { };
+    MudTextField<string> pwField1;
+    MudForm form;
+    string nameTitle = "";
+    string userName = "";
+    string namaLengkap = "";
+    string email = "";
+    string alamat = "";
+    string noHp = "";
+    string nomorCustomer = "";
+
+    // private IEnumerable<string> PasswordStrength(string pw)
+    // {
+    //     if (string.IsNullOrWhiteSpace(pw))
+    //     {
+    //         yield return "Password is required!";
+    //         yield break;
+    //     }
+    //     if (pw.Length < 8)
+    //         yield return "Password must be at least of length 8";
+    //     if (!Regex.IsMatch(pw, @"[A-Z]"))
+    //         yield return "Password must contain at least one capital letter";
+    //     if (!Regex.IsMatch(pw, @"[a-z]"))
+    //         yield return "Password must contain at least one lowercase letter";
+    //     if (!Regex.IsMatch(pw, @"[0-9]"))
+    //         yield return "Password must contain at least one digit";
+    // }
+
+    // private string PasswordMatch(string arg)
+    // {
+    //     if (pwField1.Value != arg)
+    //         return "Passwords don't match";
+    //     return null;
+    // }
+
+    private void OpenDialog()
+    {
+        DialogService.Show<VChenWeb.Components.Dialog.LogOutDialog>("Log Out");
+    }
+
+    protected override void OnInitialized()
+    {
+        Layout.ChangeTitle("Account");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var token = await ProtectedSessionStore.GetAsync<string>("token");
+            if (!token.Success)
+            {
+                NavManager.NavigateTo("/login");
+                return;
+            }
+            var authPayload = VChenWeb.Utils.Auth.ValidateToken(token.Value);
+            if (authPayload == null)
+            {
+                NavManager.NavigateTo("/login");
+                return;
+            }
+
+            var userName = VChenWeb.Utils.Auth.GetSubFromSecurityToken(authPayload);
+
+            var customer = await dbContext.MCustomer.Where(c => c.NOMHP == userName).FirstOrDefaultAsync();
+
+            if (customer == null)
+            {
+                NavManager.NavigateTo("/login");
+                return;
+            }
+
+            this.userName = customer.UserName;
+            namaLengkap = customer.NMCUS;
+            alamat = customer.ALAMAT;
+            noHp = customer.NOMHP;
+            email = customer.Email;
+
+            nameTitle = customer.NMCUS;
+            nomorCustomer = customer.NOMBR;
+
+            await dbContext.SaveChangesAsync();
+
+            StateHasChanged();
+        }
+    }
+
+    private void addSnackbar(string message, Severity severity = Severity.Error)
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+        Snackbar.Add(message, severity);
+    }
+
+    private async Task OnSubmit()
+    {
+        System.Diagnostics.Debug.Print("AJG");
+        var customer = await dbContext.MCustomer.FirstAsync(c => c.NOMBR == nomorCustomer);
+        if (customer == null)
+        {
+            return;
+        }
+
+        customer.UserName = this.userName;
+        customer.NMCUS = namaLengkap;
+        customer.ALAMAT = alamat;
+        customer.NOMHP = noHp;
+        customer.Email = email;
+
+        // System.Diagnostics.Debug.Print(namaLengkap);
+
+        await dbContext.SaveChangesAsync();
+
+        addSnackbar("Changes saved", Severity.Success);
+    }
+}

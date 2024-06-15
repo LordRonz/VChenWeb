@@ -1,0 +1,118 @@
+﻿@page "/login"
+@layout VChenWeb.Components.Layout.UnauthedLayout
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using VChenWeb.Data
+@using VChenWeb.Models
+@using Microsoft.EntityFrameworkCore;
+@using Color = MudBlazor.Color
+@using BC = BCrypt.Net.BCrypt;
+
+<PageTitle>Login</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-items-center min-vh-100 flex-column justify-content-center">
+    <MudImage Src="/images/logo.png" Class="profile-image" Width="255" Height="105"></MudImage>
+    <MudPaper Class="pa-4 mb-8 d-flex flex-column justify-content-center align-items-center w-100" Style="border-radius: 20px;" Elevation="3">
+        <div class="flex-column d-flex align-items-center justify-content-center">
+            <h1 class="h4 poppins-regular fw-bold">LOGIN</h1>
+            <p class="poppins-regular">Please Login to your Account</p>
+        </div>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" Class="d-flex flex-column gap-3 w-100">
+            <MudTextField T="string" Label="Nomor HP" @ref="userNameField" @bind-Value="userName" />
+            <MudTextField T="string" Label="Password" HelperText="Choose a strong password" Class="mt-3" InputType="@PasswordInput" @ref="pwField" @bind-Value="userPass" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonVisibilityClick" AdornmentAriaLabel="Show Password" />
+            <MudButton Variant="Variant.Filled" Style="background: linear-gradient(180deg, #27DD70 12.5%, #0F813C 85%);" Color="Color.Primary" Class="ml-auto rounded-pill" FullWidth="true" OnClick="(() => OnSubmit())">Login</MudButton>
+        </MudForm>
+        <MudLink Class="mt-4" Href="/change-password">Change password</MudLink>
+    </MudPaper>
+</MudContainer>
+
+
+@inject AppDbContext dbContext
+@inject ISnackbar Snackbar
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject NavigationManager NavManager
+@code {
+    private List<DateTime> markedDates = new List<DateTime>();
+    List<MCustomer> customers = new List<MCustomer>();
+
+    bool success;
+    string[] errors = { };
+    MudTextField<string> pwField;
+    MudTextField<string> userNameField;
+    string userName = "";
+    string userPass = "";
+    string ktp = "";
+    MudForm form;
+
+    bool isShow;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    void ButtonVisibilityClick()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+
+    private IEnumerable<string> PasswordStrength(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return "Password is required!";
+            yield break;
+        }
+        if (pw.Length < 8)
+            yield return "Password must be at least of length 8";
+        if (!Regex.IsMatch(pw, @"[A-Z]"))
+            yield return "Password must contain at least one capital letter";
+        if (!Regex.IsMatch(pw, @"[a-z]"))
+            yield return "Password must contain at least one lowercase letter";
+        if (!Regex.IsMatch(pw, @"[0-9]"))
+            yield return "Password must contain at least one digit";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = await dbContext.MCustomer.ToListAsync();
+    }
+
+    private void addSnackbar(string message, Severity severity = Severity.Error)
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+        Snackbar.Add(message, severity);
+    }
+
+    public async Task OnSubmit()
+    {
+        var customer = await dbContext.MCustomer.Where(c => c.NOMHP == userName).FirstOrDefaultAsync();
+        if (customer == null)
+        {
+            addSnackbar("User not found");
+            return;
+        }
+        if (!BC.Verify(userPass, customer.UserPass))
+        {
+            addSnackbar("Invalid username or password");
+            return;
+        }
+
+        var token = VChenWeb.Utils.Auth.GenerateToken(customer.NOMHP);
+
+        await ProtectedSessionStore.SetAsync("token", token);
+
+        addSnackbar("Logged In", Severity.Success);
+
+        NavManager.NavigateTo("/");
+    }
+}

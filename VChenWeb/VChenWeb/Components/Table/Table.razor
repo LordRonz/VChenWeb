@@ -1,0 +1,47 @@
+﻿@using VChenWeb.Utils
+
+<MudTable HeaderClass="bg-warning" Items="@Config.GetData()" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="MudBlazor.Color.Info">
+    <HeaderContent>
+        @foreach (TableColumn col in Config.GetColumn())
+        {
+            // Pass the Dto properties to the component
+            <MudTh Class="fw-bold">@col.Caption</MudTh>
+        }
+    </HeaderContent>
+    <RowTemplate>
+        @foreach (TableColumn col in Config.GetColumn())
+        {
+            // Pass the Dto properties to the component
+            @switch (col.Type)
+            {
+                case ColumnType.Data:
+                    <MudTd DataLabel="@col.Caption">@context.GetValueOrDefault(col.DataField)</MudTd>
+                    break;
+                case ColumnType.Edit:
+                    <MudTd DataLabel="@col.Caption">
+                        <MudFab Size="MudBlazor.Size.Small" Color="MudBlazor.Color.Primary" StartIcon="@Icons.Material.Filled.Edit" Href="@context.GetValueOrDefault(col.DataField)" />
+                    </MudTd>
+                    break;
+                case ColumnType.View:
+                    <MudTd DataLabel="@col.Caption">
+                        <MudFab Size="MudBlazor.Size.Small" Color="MudBlazor.Color.Primary" StartIcon="@Icons.Material.Filled.RemoveRedEye" Href="@context.GetValueOrDefault(col.DataField)" />
+                    </MudTd>
+                    break;
+                case null:
+                    <MudTd DataLabel="@col.Caption">@context.GetValueOrDefault(col.DataField)</MudTd>
+                    break;
+            }
+        }
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager InfoFormat="@infoFormat" HideRowsPerPage="true" HorizontalAlignment="MudBlazor.HorizontalAlignment.Center" Class="justify-content-around d-flex w-100" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private bool _loading;
+    private string infoFormat = "Showing {first_item} to {last_item} of {all_items}";
+
+    [Parameter]
+    public TableConfig Config { get; set; } = new TableConfig(new List<TableColumn>(), new List<object>());
+}

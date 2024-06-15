@@ -1,0 +1,70 @@
+﻿@inherits LayoutComponentBase
+
+@* <div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+        <Button />
+    </main>
+    <ProfiraClinicWeb.Components.Layout.Footer.Footer />
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/> *@
+
+<MudThemeProvider @rendermode="InteractiveServer" />
+<MudSnackbarProvider @rendermode="InteractiveServer" />
+<MudDialogProvider @rendermode="InteractiveServer" />
+
+<CascadingValue Value="this">
+    <MudLayout>
+        <MudAppBar Class="bg-danger">
+            <MudLink Href="/profile">
+                <p class="m-0 p-0 align-self-center h5 text-white">@Title</p>
+            </MudLink>
+            <MudSpacer />
+            <MudLink Href="/" Class="d-flex justify-content-center gap-2 text-decoration-none">
+                <MudImage Src="images/logo-SR.jpeg" Alt="Sari Rasa" Elevation="25" Class="" Width="35" Height="35" />
+            </MudLink>
+        </MudAppBar>
+        <MudMainContent Class="mb-16 pb-16">
+            <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4">
+                @Body
+            </MudContainer>
+        </MudMainContent>
+        <VChenWeb.Components.Layout.Footer.Footer />
+    </MudLayout>
+</CascadingValue>
+
+@code {
+    bool _drawerOpen = true;
+
+    public string Title { get; set; } = "SARI RASA";
+
+    public void ChangeTitle(string newTitle)
+    {
+        Title = newTitle;
+        StateHasChanged();
+    }
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}
