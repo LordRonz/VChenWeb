@@ -10,9 +10,9 @@
 
 <PageTitle>Login</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-items-center min-vh-100 flex-column justify-content-center">
+<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-items-center min-vh-100 flex-column justify-content-around">
     <MudImage Src="/images/logo.png" Class="profile-image" Width="255" Height="105"></MudImage>
-    <MudPaper Class="pa-4 mb-8 d-flex flex-column justify-content-center align-items-center w-100" Style="border-radius: 20px;" Elevation="3">
+    <MudPaper Class="pa-8 mb-8 d-flex flex-column justify-content-center align-items-center w-100" Style="border-radius: 20px; background-image: url('images/bg-login.png'); background-position: bottom; background-repeat: no-repeat; background-size: cover; padding-bottom: 25vh !important;" Elevation="3">
         <div class="flex-column d-flex align-items-center justify-content-center">
             <h1 class="h4 poppins-regular fw-bold">LOGIN</h1>
             <p class="poppins-regular">Please Login to your Account</p>
@@ -116,3 +116,25 @@
         NavManager.NavigateTo("/");
     }
 }
+
+<style>
+    .mud-input-root {
+        border-radius: 10px !important;
+        height: 30px !important;
+        padding: 0px 10px !important;
+        font-size: 10px !important;
+    }
+
+    .mud-input-label {
+        font-size: 10px !important;
+        line-height: 10px !important;
+    }
+
+    .mud-input-label-filled.mud-input-label-margin-dense {
+        transform: translate(12px, 20px) scale(1) !important;
+    }
+
+    .mud-input-label-inputcontrol {
+        top: -10px !important;
+    }
+</style>
