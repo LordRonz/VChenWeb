@@ -18,22 +18,23 @@
 @if (loaded)
 {   <div class="w-100 d-flex align-items-center flex-column home-container">
         <MudContainer Class="d-flex flex-column justify-content-between" Style="height: 38vh;">
+            <MudImage Src="/images/logo.png" Class="profile-image" Width="320" Height="131"></MudImage>
             <div class="w-100 mt-6 d-flex justify-content-end">
-                <MudImage Src="images/logo-SR.jpeg" Alt="Sari Rasa" Elevation="25" Class="" Width="35" Height="35" />
+                @* <MudImage Src="images/logo-SR.jpeg" Alt="Sari Rasa" Elevation="25" Class="" Width="35" Height="35" /> *@
             </div>
             <div class="d-flex align-items-center gap-4 w-100 align-items-start">
                 @* <MudImage Src="/images/profile.jpg" Class="rounded-circle profile-image" Width="80" Height="80"></MudImage> *@
                 <div>
-                    <p class="m-0 p-0 text-white fw-light">Hello,</p>
-                    <h2 class="h2 fw-light text-white mb-4">@name</h2>
-                    <h3 class="h6 text-white fw-light">Jumlah Point</h3>
-                    <h3 class="h2 text-white">@point</h3>
+                    <p class="m-0 p-0 text-black fw-light">Hello,</p>
+                    <h2 class="h2 fw-normal mb-4 text-red">@name</h2>
+                    <h3 class="h6 text-black fw-light">Jumlah Point</h3>
+                    <h3 class="h2 text-red">@point</h3>
                 </div>
             </div>
-            <MudPaper Class="pa-4 kartu-member-container" Elevation="3" Style="background: #E7C449; justify-self: end; margin-bottom: -6px">
+            <MudPaper Class="pa-4 kartu-member-container" Elevation="3" Style="background: rgba(185, 5, 5, 1); justify-self: end; margin-bottom: -6px">
                 <div class="d-flex align-items-center justify-content-center gap-4">
                     <div>
-                        <h3 class="h4 m-0 text-uppercase">Kartu Member</h3>
+                        <h3 class="h4 m-0 text-uppercase text-white">Kartu Member</h3>
                     </div>
                     <MudButton Variant="Variant.Filled" Size="Size.Medium" Color="Color.Error" Href="/card" Style="border-radius: 10px; background: #F4F1F1; color: #FB0000; text-transform: capitalize">Lihat Kartu</MudButton>
                 </div>
@@ -42,7 +43,7 @@
         <MudCard Class="w-100 pb-24 position-relative promo-container">
             <MudContainer Class="pt-8">
                 <MudText Class="mb-2 fw-bold">Sari Rasa Online Shopping (08.00 ~ 21.00)</MudText>
-                <MudFab Color="Color.Success" Style="border-radius: 10px;" StartIcon="@Icons.Material.Filled.Whatsapp" Label="Order Via Whatsapp" Class="w-100 mb-4" Target="_blank" Href="https://wa.me/628113500899" />
+                <MudFab Color="Color.Success" Style="border-radius: 10px;" StartIcon="@Icons.Material.Filled.Whatsapp" Label="Appointment Via Whatsapp" Class="w-100 mb-4" Target="_blank" Href="https://wa.me/628113500899" />
                 <MudText Class="fw-bold">Promosi</MudText>
                 @if (promosi.Length > 0)
                 {
@@ -170,7 +171,7 @@ else
     {
         var dbContext = DbFactory.CreateDbContext();
 
-        await dbContext.Database.ExecuteSqlAsync($"EXECUTE usp_CekPoint '{customer.NOMBR}'");
+        // await dbContext.Database.ExecuteSqlAsync($"EXECUTE usp_CekPoint '{customer.NOMBR}'");
         // await dbContext.Database.ExecuteSqlAsync($"EXECUTE usp_Customer_View '{customer.NOMBR}'");
   
         var sldPoint = await dbContext.SldPoint.Where(p => p.NOMBR == customer.NOMBR).FirstOrDefaultAsync();
@@ -187,6 +188,18 @@ else
         border-top-left-radius: 30px !important;
     }
     .home-container {
-        background: linear-gradient(151.34deg, #C61818 -0.49%, #600C0C 60.04%);
+        background: linear-gradient(226.36deg, #C9F9D1 2.04%, #0EAB31 70.48%);
+    }
+    .profile-image {
+        position: absolute;
+        top: 10vh;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        opacity: 40%;
+    }
+    .text-red {
+        color: rgba(180, 4, 39, 1);
     }
 </style>
