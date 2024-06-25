@@ -17,12 +17,12 @@
 
 @if (loaded)
 {   <div class="w-100 d-flex align-items-center flex-column home-container">
-        <MudContainer Class="d-flex flex-column justify-content-between" Style="height: 38vh;">
+        <MudContainer Class="d-flex flex-column justify-content-between" Style="height: 30vh;">
             <MudImage Src="/images/logo.png" Class="profile-image" Width="320" Height="131"></MudImage>
             <div class="w-100 mt-6 d-flex justify-content-end">
                 @* <MudImage Src="images/logo-SR.jpeg" Alt="Sari Rasa" Elevation="25" Class="" Width="35" Height="35" /> *@
             </div>
-            <div class="d-flex align-items-center gap-4 w-100 align-items-start">
+            <div class="d-flex align-items-center gap-4 w-100 align-items-start pa-6">
                 @* <MudImage Src="/images/profile.jpg" Class="rounded-circle profile-image" Width="80" Height="80"></MudImage> *@
                 <div>
                     <p class="m-0 p-0 text-black fw-light">Hello,</p>
@@ -40,10 +40,11 @@
                 </div>
             </MudPaper>
         </MudContainer>
-        <MudCard Class="w-100 pb-24 position-relative promo-container">
+        <MudCard Class="w-100 position-relative promo-container" Style="height: 70vh;">
             <MudContainer Class="pt-8">
-                <MudText Class="mb-2 fw-bold">Sari Rasa Online Shopping (08.00 ~ 21.00)</MudText>
+                <MudText Class="mb-2 fw-bold">Appointment (08.00 ~ 21.00)</MudText>
                 <MudFab Color="Color.Success" Style="border-radius: 10px;" StartIcon="@Icons.Material.Filled.Whatsapp" Label="Appointment Via Whatsapp" Class="w-100 mb-4" Target="_blank" Href="https://wa.me/628113500899" />
+                <VChenWeb.Components.Menu.Menu></VChenWeb.Components.Menu.Menu>
                 <MudText Class="fw-bold">Promosi</MudText>
                 @if (promosi.Length > 0)
                 {

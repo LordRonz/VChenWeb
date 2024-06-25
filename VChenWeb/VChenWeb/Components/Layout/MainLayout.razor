@@ -34,14 +34,11 @@
 
 <CascadingValue Value="this">
     <MudLayout>
-        <MudAppBar Class="bg-danger">
+        <MudAppBar Class="bg-app-bar">
             <MudLink Href="/profile">
                 <p class="m-0 p-0 align-self-center h5 text-white">@Title</p>
             </MudLink>
             <MudSpacer />
-            <MudLink Href="/" Class="d-flex justify-content-center gap-2 text-decoration-none">
-                <MudImage Src="images/logo-SR.jpeg" Alt="Sari Rasa" Elevation="25" Class="" Width="35" Height="35" />
-            </MudLink>
         </MudAppBar>
         <MudMainContent Class="mb-16 pb-16">
             <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4">
@@ -68,3 +65,9 @@
         _drawerOpen = !_drawerOpen;
     }
 }
+
+<style>
+    .bg-app-bar {
+        background: linear-gradient(90deg, #0EAB31 0%, #11FF46 100%);
+    }
+</style>
