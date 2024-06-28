@@ -1,11 +1,14 @@
-﻿<div class="d-flex justify-content-center align-items-center flex-column">
+﻿<a href="@Href" class="d-flex justify-content-center align-items-center flex-column">
     <MudImage Src="@Src" Width="85" Height="85" Class="rounded-circle" />
     <p>@Title</p>
-</div>
+</a>
 
 @code {
     [Parameter]
     public string Src { get; set; } = "/images/menu/treatment.png";
+
+    [Parameter]
+    public string Href { get; set; } = "/produk";
 
     [Parameter]
     public string Title { get; set; } = "Produk";
